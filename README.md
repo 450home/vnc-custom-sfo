@@ -12,14 +12,14 @@
 
 ## 访问
 - noVNC 桌面: https://<fqdn>/ （443:6080/tls+http）
-- filebrowser: https://<fqdn>:8080/ （8080:8080/tls+http）
+- filebrowser: http://<fqdn>:8080/ （8080:8080/tcp，平台限制非 443 不能用 HTTP 模式）
 - SSH（AI 管理通道，TLS 包装）:
   ssh -o ProxyCommand="openssl s_client -quiet -connect %h:2222 -servername %h" root@<fqdn>
 
 ## 部署
 ```
 unikraft run --metro sfo -n vnc-custom-sfo -m 4G \
-  -p 443:6080/tls+http -p 2222:2222/tls -p 8080:8080/tls+http \
+  -p 443:6080/tls+http -p 2222:2222/tls -p 8080:8080/tcp \
   -v vnc-custom-data-sfo:/data \
   -e "PUBKEY=$(cat ~/.ssh/id_ed25519.pub)" \
   --image susanlee/vnc-custom:latest
