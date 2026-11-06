@@ -22,9 +22,12 @@ echo "root:${ROOT_PASS:-unikraft}" | chpasswd 2>/dev/null || true
 
 # filebrowser（/data，端口 8080，用户名/密码认证；DB 在 /tmp——UKC 卷上 SQLite 文件锁 timeout，不能放 /data；用户每次 boot 由 env 重建）
 FB_DB=/tmp/filebrowser.db
+# 注意：此 filebrowser 版本没有 users upsert；密码必须 >=12 字符；每 boot 重建用户
 [ -f "$FB_DB" ] || /usr/local/bin/filebrowser -d "$FB_DB" config init >/dev/null 2>&1
-/usr/local/bin/filebrowser -d "$FB_DB" users upsert "${FILEBROWSER_USER:-admin}" "${FILEBROWSER_PASS:-unikraft}" --perm.admin >/dev/null 2>&1 || \
-    /usr/local/bin/filebrowser -d "$FB_DB" users add "${FILEBROWSER_USER:-admin}" "${FILEBROWSER_PASS:-unikraft}" --perm.admin >/dev/null 2>&1 || true
+if ! /usr/local/bin/filebrowser -d "$FB_DB" users ls 2>/dev/null | grep -q "^1 "; then
+    /usr/local/bin/filebrowser -d "$FB_DB" users add "${FILEBROWSER_USER:-admin}" "${FILEBROWSER_PASS:?need >=12 chars}" --perm.admin >/tmp/fb_user_err.log 2>&1 \
+        || cat /tmp/fb_user_err.log >&2
+fi
 /usr/local/bin/filebrowser -d "$FB_DB" \
     --root /data \
     --port 8080 \
