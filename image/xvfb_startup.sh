@@ -40,6 +40,11 @@ XVFB_PID=$!
 
 # Wait for Xvfb to start
 if wait_for_xvfb; then
+    sleep 1
+    if ! xdpyinfo >/dev/null 2>&1; then
+        echo "Xvfb flapped after readiness; retrying xdpyinfo wait" >&2
+        wait_for_xvfb || { echo "Xvfb died after start" >&2; exit 1; }
+    fi
     echo "Xvfb started successfully on display ${DISPLAY}"
     echo "Xvfb PID: $XVFB_PID"
 else
