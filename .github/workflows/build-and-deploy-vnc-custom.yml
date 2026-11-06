@@ -37,6 +37,9 @@ jobs:
       - name: Delete existing instance (if any)
         run: unikraft instances delete vnc-custom-sfo || true
 
+      - name: Ensure data volume exists
+        run: unikraft volume create --name vnc-custom-data-sfo --size 1024 --metro sfo || true
+
       - name: Deploy to SFO
         run: |
           unikraft run --metro sfo \
