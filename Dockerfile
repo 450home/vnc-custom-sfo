@@ -40,7 +40,7 @@ RUN apt-get update && \
     file \
     zip \
     unzip \
-    firefox-esr && \
+    chromium && \
     sed -i 's/# zh_CN.UTF-8/zh_CN.UTF-8/' /etc/locale.gen && \
     locale-gen && \
     update-ca-certificates && \

@@ -1,6 +1,6 @@
 # vnc-custom-sfo（定制版 noVNC 浏览器实例）
 
-> 基于 novnc-slim（openbox+tint2+firefox-esr）定制，部署到 susanlee @ SFO。
+> 基于 novnc-slim（openbox+tint2+chromium）定制，部署到 susanlee @ SFO。
 
 ## 定制点（vs 原 novnc-browser-susan）
 1. **分辨率 1920x1080**（原 1024x768）

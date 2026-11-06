@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Chromium
+Comment=Open Chromium web browser
+Exec=chromium --no-sandbox --disable-gpu --disable-software-rasterizer
+Icon=chromium
+Terminal=false
+Type=Application
+Categories=Network;WebBrowser;
