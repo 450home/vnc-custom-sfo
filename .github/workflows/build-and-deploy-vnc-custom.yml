@@ -1,0 +1,50 @@
+name: build-and-deploy-vnc-custom
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    env:
+      UKC_TOKEN: ${{ secrets.UKC_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Unikraft CLI
+        run: |
+          mkdir -p "$HOME/.local/bin" "$HOME/ukc-build"
+          curl -fsSL "https://github.com/unikraft-cloud/cli/releases/download/v0.4.2/unikraft-cli_0.4.2_linux_amd64.tar.gz" -o "$HOME/ukc-build/unikraft-cli.tar.gz"
+          tar -xzf "$HOME/ukc-build/unikraft-cli.tar.gz" -C "$HOME/ukc-build"
+          find "$HOME/ukc-build" -type f -name unikraft -exec cp {} "$HOME/.local/bin/unikraft" \;
+          chmod +x "$HOME/.local/bin/unikraft"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Login to Unikraft Cloud
+        run: printf '%s' "$UKC_TOKEN" | unikraft login --token - --organization susanlee
+
+      - name: Delete stale images (quota safety)
+        run: |
+          unikraft images delete susanlee/vnc-custom || true
+          unikraft images delete index.sfo.unikraft.cloud/susanlee/vnc-custom || true
+
+      - name: Build and publish image
+        run: unikraft build . --output susanlee/vnc-custom:latest
+
+      - name: Delete existing instance (if any)
+        run: unikraft instances delete vnc-custom-sfo || true
+
+      - name: Deploy to SFO
+        run: |
+          unikraft run --metro sfo \
+            -n vnc-custom-sfo \
+            -m 4G \
+            -p 443:6080/tls+http \
+            -p 2222:2222/tls \
+            -p 8080:8080/tls+http \
+            -v vnc-custom-data-sfo:/data \
+            -e "PUBKEY=${{ secrets.PUBKEY }}" \
+            --image susanlee/vnc-custom:latest
