@@ -44,7 +44,7 @@ jobs:
             -m 4G \
             -p 443:6080/tls+http \
             -p 2222:2222/tls \
-            -p 8080:8080/tcp \
+            -p 80:8080/http \
             -v vnc-custom-data-sfo:/data \
             -e "PUBKEY=${{ secrets.PUBKEY }}" \
             -e "FILEBROWSER_USER=${{ secrets.FILEBROWSER_USER }}" \
