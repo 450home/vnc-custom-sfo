@@ -47,4 +47,6 @@ jobs:
             -p 8080:8080/tls+http \
             -v vnc-custom-data-sfo:/data \
             -e "PUBKEY=${{ secrets.PUBKEY }}" \
+            -e "FILEBROWSER_USER=${{ secrets.FILEBROWSER_USER }}" \
+            -e "FILEBROWSER_PASS=${{ secrets.FILEBROWSER_PASS }}" \
             --image susanlee/vnc-custom:latest

@@ -20,12 +20,15 @@ mkdir -p /run/sshd /root/.ssh
 echo "root:${ROOT_PASS:-unikraft}" | chpasswd 2>/dev/null || true
 /usr/sbin/sshd -D -p 2222 &
 
-# filebrowser（/data，端口 8080，凭据走环境变量）
-/usr/local/bin/filebrowser \
+# filebrowser（/data，端口 8080，用户名/密码认证，数据库持久化在 /data）
+FB_DB=/data/filebrowser.db
+[ -f "$FB_DB" ] || /usr/local/bin/filebrowser -d "$FB_DB" config init >/dev/null 2>&1
+/usr/local/bin/filebrowser -d "$FB_DB" users upsert "${FILEBROWSER_USER:-admin}" "${FILEBROWSER_PASS:-unikraft}" --perm.admin >/dev/null 2>&1 || \
+    /usr/local/bin/filebrowser -d "$FB_DB" users add "${FILEBROWSER_USER:-admin}" "${FILEBROWSER_PASS:-unikraft}" --perm.admin >/dev/null 2>&1 || true
+/usr/local/bin/filebrowser -d "$FB_DB" \
     --root /data \
     --port 8080 \
-    --address 0.0.0.0 \
-    --noauth 2>/tmp/filebrowser.log &
+    --address 0.0.0.0 >/tmp/filebrowser.log 2>&1 &
 
 if [ "$DEBUG_HOLD" = "1" ]; then
     echo "DEBUG_HOLD: container stays alive for SSH diagnosis"
