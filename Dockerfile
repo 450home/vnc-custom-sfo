@@ -63,6 +63,8 @@ RUN wget -qO /usr/local/bin/filebrowser.tar.gz https://github.com/filebrowser/fi
     chmod +x /usr/local/bin/filebrowser && \
     rm -f /usr/local/bin/filebrowser.tar.gz
 
+RUN echo "export LANG=zh_CN.UTF-8 LC_ALL=zh_CN.UTF-8" > /etc/profile.d/zh_locale.sh
+
 COPY ./image /
 COPY --chmod=755 ./wrapper.sh /wrapper.sh
 

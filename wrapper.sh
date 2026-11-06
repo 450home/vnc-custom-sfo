@@ -20,8 +20,8 @@ mkdir -p /run/sshd /root/.ssh
 echo "root:${ROOT_PASS:-unikraft}" | chpasswd 2>/dev/null || true
 /usr/sbin/sshd -D -p 2222 &
 
-# filebrowser（/data，端口 8080，用户名/密码认证，数据库持久化在 /data）
-FB_DB=/data/filebrowser.db
+# filebrowser（/data，端口 8080，用户名/密码认证；DB 在 /tmp——UKC 卷上 SQLite 文件锁 timeout，不能放 /data；用户每次 boot 由 env 重建）
+FB_DB=/tmp/filebrowser.db
 [ -f "$FB_DB" ] || /usr/local/bin/filebrowser -d "$FB_DB" config init >/dev/null 2>&1
 /usr/local/bin/filebrowser -d "$FB_DB" users upsert "${FILEBROWSER_USER:-admin}" "${FILEBROWSER_PASS:-unikraft}" --perm.admin >/dev/null 2>&1 || \
     /usr/local/bin/filebrowser -d "$FB_DB" users add "${FILEBROWSER_USER:-admin}" "${FILEBROWSER_PASS:-unikraft}" --perm.admin >/dev/null 2>&1 || true

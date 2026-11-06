@@ -9,6 +9,8 @@
 4. **filebrowser**（8080，管 /data，浏览器可视化管理）
 5. **永久存储**：卷 vnc-custom-data-sfo (1GiB) 挂 /data
 6. 加了 curl/git/zip/unzip/file 常用工具
+7. filebrowser DB 在 /tmp（**UKC 卷上 SQLite flock 不可用**，放 /data 会 timeout→零用户→403）；用户每次 boot 由 FILEBROWSER_USER/PASS env 重建
+8. SSH shell 中文 locale（/etc/profile.d/zh_locale.sh）
 
 ## 访问
 - noVNC 桌面: https://<fqdn>/ （443:6080/tls+http）
