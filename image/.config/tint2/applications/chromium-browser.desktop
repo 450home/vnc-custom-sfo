@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Chromium
-Comment=Open Chromium web browser
-Exec=chromium --no-sandbox --disable-gpu --disable-software-rasterizer
+Comment=Open Chromium web browser (profile persisted on /data volume)
+Exec=chromium --no-sandbox --disable-gpu --disable-software-rasterizer --user-data-dir=/data/browser/chromium-profile
 Icon=chromium
 Terminal=false
 Type=Application

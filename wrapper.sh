@@ -13,6 +13,16 @@ export LC_ALL=zh_CN.UTF-8
 mkdir -p /data/browser /data/downloads
 [ -d /root/Downloads ] || ln -sf /data/downloads /root/Downloads 2>/dev/null || true
 
+# 浏览器 profile（Cookie/登录态/密码/扩展）持久化到卷：
+# wrapper 里 export HOME=/ 只影响 wrapper 自身进程；tint2 启动的浏览器 HOME=/root，
+# 故显式把 /root/.config/chromium 软链到卷，并在 desktop 的 Exec 里带 --user-data-dir。
+mkdir -p /data/browser/chromium-profile
+if [ -d /root/.config/chromium ] && [ ! -L /root/.config/chromium ]; then
+    cp -a /root/.config/chromium/. /data/browser/chromium-profile/ 2>/dev/null || true
+    rm -rf /root/.config/chromium
+fi
+ln -sfn /data/browser/chromium-profile /root/.config/chromium
+
 # 常驻 SSHD（2222）——AI/管理员管理通道
 export PATH=$PATH:/usr/sbin
 mkdir -p /run/sshd /root/.ssh
